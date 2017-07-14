@@ -1,0 +1,16 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>导出课程表</title>
+</head>
+<body>
+<table border=1>
+ <tr><td></td><td>星期一</td><td>星期二</td><td>星期三</td><td>星期四</td><td>星期五</td><td>星期六</td><td>星期日</td></tr>
+ <volist id="course_names" name="course_names" offset="1" length="12">
+      <tr><td>{<$course_names.zero>}</td><td>{<$course_names.one>}</td><td>{<$course_names.two>}</td><td>{<$course_names.three>}</td>
+      <td>{<$course_names.four>}</td><td>{<$course_names.five>}</td><td>{<$course_names.six>}</td><td>{<$course_names.seven>}</td></tr>
+ </volist>
+</table>
+</body>
+</html>

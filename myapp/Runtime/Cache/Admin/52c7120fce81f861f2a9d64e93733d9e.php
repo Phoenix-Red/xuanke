@@ -1,0 +1,16 @@
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>专业选修课网站后台管理界面</title>
+<link href="__PUBLIC__/css/admin.css" rel="stylesheet" type="text/css" />
+</head>
+<body id="page">
+
+
+<h2>首页信息</h2>
+<br>
+<br>
+<h3><font color="blue">欢迎来到学生专业选修课网站后台管理界面，请慎重操作！</font></h3>
+</body>
+</html>

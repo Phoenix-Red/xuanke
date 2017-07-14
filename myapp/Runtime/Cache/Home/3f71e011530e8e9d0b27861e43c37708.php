@@ -1,0 +1,15 @@
+<?php if (!defined('THINK_PATH')) exit();?>﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Refresh" content="5;URL=<?php echo ($jumpUrl); ?>" />
+<title><?php echo ($message); ?></title>
+<link href="__PUBLIC__/css/admin.css" rel="stylesheet" type="text/css" />
+</head>
+<body id="page">
+<br>
+<br>
+<center><h3><font color="red"><b><?php echo ($message); ?>,<?php echo ($teac_info["teacher_name"]); ?>5秒后将会自动跳转，如果不能跳转，请<a href="<?php echo ($jumpUrl); ?>">点击这里</a></b></font></h3></center>
+<br>
+</body>
+</html>

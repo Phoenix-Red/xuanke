@@ -1,0 +1,271 @@
+<?php
+ $files="myapp/Conf/install_config.php";
+
+ if(!is_writable($files)){
+  	echo "<font color=red>文件不可写！！！</font>";
+  }
+ if(isset($_POST[install]) && !empty($_POST[host])){
+    $host        =     $_POST[host];
+    $user        =     $_POST[user];
+    $password    =     $_POST[password];
+    $dbname          =     $_POST[dbname];
+    $config_str  = "<?php";
+	$config_str .= "\n";
+	$config_str .= "return array(";
+	$config_str .= "\n";
+	$config_str .= "'DB_HOST'=>'".$host."',";
+	$config_str .= "\n";
+	$config_str .= "'DB_USER'=>'".$user."',";
+	$config_str .= "\n";
+	$config_str .= "'DB_PWD'=>'".$password."',";
+	$config_str .= "\n";
+	$config_str .= "'DB_NAME'=>'".$dbname."',";
+	$config_str .= "\n";
+	$config_str .= ");";
+	$config_str .= "\n";
+	$config_str .= '?>';
+	$ff = fopen($files, "w+");
+	fwrite($ff, $config_str);
+    fclose($ff);
+	$config=include_once($files);
+	$mydbhost=$config['DB_HOST'];
+	$mydbuser=$config['DB_USER'];
+	$mydbpw=$config['DB_PWD'];
+	$mydbname=$config['DB_NAME'];
+	if (!@$link = mysql_connect($mydbhost, $mydbuser, $mydbpw)) {
+        $msg="数据库连接失败! 请返回上一页检查连接参数 <a href='javascript:history.go(-1)'><font color=#ff0000>返回修改</font></a>";
+        echo
+"<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+<meta name='Author' content='Alan'>
+<title>安装程序</title>
+<link rel='stylesheet' type='text/css' href='Public/css/install.css'>
+<style type='text/css'>
+    body{
+    	background-color:#ffffff;
+    }
+</style>
+</head><body>
+	<br>
+	<center><font color='#0000ff' size='3'>
+  <b>
+  <li>学校：曲阜师范大学</li>
+  <li>学院：信息科学与工程学院</li>
+  <li>专业：计算机科学与技术（师范）</li>
+  <li>题目：基于PHP的专业选修课网站设计与实现</li> 
+  <li>姓名：李兴部</li>
+  <li>学号：2013412355</li>
+  </b>
+  </font>
+  </center>
+  <br/>
+
+	<table border=0 cellspacing=1 align=center class=form height='150px'>
+	<tr height='21px'>
+		<th colspan='2'>安装程序</th>
+	</tr>" .
+	"<tr align='center'>
+		<td colspan='2'>".$msg."</td>
+	</tr></table></body></html>";
+    exit();
+
+	} else {
+		mysql_query("SET NAMES 'utf8'",$link);
+		if(!mysql_select_db($mydbname,$link)){
+			if(!mysql_query("CREATE DATABASE `$mydbname`;",$link)){
+        $msg="创建数据库失败! 请检查是否有足够的权限！ <a href='javascript:history.go(-1)'><font color=#ff0000>返回修改</font></a>";
+        echo
+"<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+<meta name='Author' content='Alan'>
+<title>安装程序</title>
+<link rel='stylesheet' type='text/css' href='Public/css/install.css'>
+<style type='text/css'>
+    body{
+    	background-color:#ffffff;
+    }
+</style>
+</head><body>
+  <br>
+  <center><font color='#0000ff' size='3'>
+  <b>
+  <li>学校：曲阜师范大学</li>
+  <li>学院：信息科学与工程学院</li>
+  <li>专业：计算机科学与技术（师范）</li>
+  <li>题目：基于PHP的专业选修课网站设计与实现</li> 
+  <li>姓名：李兴部</li>
+  <li>学号：2013412355</li>
+  </b>
+  </font>
+  </center>
+  <br/>
+
+	<table border=0 cellspacing=1 align=center class=form height='150px'>
+	<tr height='21px'>
+		<th colspan='2'>安装程序</th>
+	</tr>" .
+	"<tr align='center'>
+		<td colspan='2'>".$msg."</td>
+	</tr></table></body></html>";			
+exit();
+}
+			mysql_select_db($mydbname,$link);
+		}
+		$sql_query[] = "CREATE TABLE `info_admin` (
+                        `username` varchar(20) NOT NULL,
+                        `password` varchar(50) default NULL,
+                         PRIMARY KEY  (`username`)
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+		$sql_query[] = "CREATE TABLE `info_course` (
+                       `id` int(5) NOT NULL auto_increment,
+                       `no` varchar(50) NOT NULL COMMENT '课程编号',
+                       `name` varchar(50) NOT NULL COMMENT '课程名',
+                       `teacher_id` varchar(50) NOT NULL,
+                       `teacher_name` varchar(50) NOT NULL COMMENT '教师名',
+                       `selectedMan` int(11) default '0' COMMENT '已选人数',
+                       `capacity` int(11) default NULL COMMENT '容量',
+                       `time` varchar(50) default NULL COMMENT '上课时间',
+                       `place` varchar(50) default NULL COMMENT '上课地点',
+                       `credit` float default NULL COMMENT '学分',
+                        PRIMARY KEY  (`id`)
+                       ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+		$sql_query[] = "CREATE TABLE `info_selected` (
+                        `stu_id` varchar(50) NOT NULL,
+                        `course_id` int(11) NOT NULL,
+                        PRIMARY KEY  (`stu_id`,`course_id`)
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+        $sql_query[]="CREATE TABLE `info_student` (
+                     `id` varchar(50) NOT NULL COMMENT '学号',
+                      `name` varchar(20) NOT NULL COMMENT '姓名',
+                      `dept` varchar(40) NOT NULL COMMENT '系名',
+                      `major` varchar(40) NOT NULL COMMENT '专业',
+                      `sex` char(4) NOT NULL COMMENT '性别',
+                      `class` varchar(20) NOT NULL COMMENT '班级',
+                      `password` varchar(50) NOT NULL default 'e10adc3949ba59abbe56e057f20f883e' COMMENT '密码',
+                       PRIMARY KEY  (`id`)
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+        $sql_query[]="CREATE TABLE `info_teacher` (
+                      `id` varchar(50) NOT NULL COMMENT '工号',
+                      `name` varchar(20) NOT NULL COMMENT '姓名',
+                      `dept` varchar(40) default NULL COMMENT '系名',
+                      `sex` char(4) default NULL COMMENT '性别',
+                      `zhicheng` varchar(30) default NULL COMMENT '职称',
+                      `password` varchar(50) NOT NULL default 'e10adc3949ba59abbe56e057f20f883e' COMMENT '密码',
+                       PRIMARY KEY  (`id`)
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+        $sql_query[]="INSERT INTO `info_admin` (`username`, `password`) VALUES
+('admin', '21232f297a57a5a743894a0e4a801fc3');";
+        $sql_query[]="INSERT INTO `info_student` (`id`, `name`, `dept`, `major`, `sex`, `class`, `password`) VALUES
+('2013412355', '李兴部', '信息科学与工程学院', '计算机科学与技术（师范）', '男', '13级计算机1班', 'e10adc3949ba59abbe56e057f20f883e');";
+		$sql_query[]="INSERT INTO `info_teacher` (`id`, `name`, `dept`, `sex`, `zhicheng`, `password`) VALUES
+('001', '赵景秀', '信息科学与工程学院', '男', '副教授', 'e10adc3949ba59abbe56e057f20f883e');";
+		foreach($sql_query as $val){
+			mysql_query($val);
+		}
+       mysql_close();
+       $msg="安装成功 ！<a href='index.php'><font color=#ff0000>进入首页</font></a>";
+       echo
+"<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+<meta name='Author' content='Alan'>
+<title>安装程序</title>
+<link rel='stylesheet' type='text/css' href='Public/css/install.css'>
+<style type='text/css'>
+    body{
+    	background-color:#ffffff;
+    }
+</style>
+</head><body>
+	 <br>
+  <center><font color='#0000ff' size='3'>
+  <b>
+  <li>学校：曲阜师范大学</li>
+  <li>学院：信息科学与工程学院</li>
+  <li>专业：计算机科学与技术（师范）</li>
+  <li>题目：基于PHP的专业选修课网站设计与实现</li> 
+  <li>姓名：李兴部</li>
+  <li>学号：2013412355</li>
+  </b>
+  </font>
+  </center>
+  <br/>
+
+	<table border=0 cellspacing=1 align=center class=form height='150px'>
+	<tr height='21px'>
+		<th colspan='2'>安装程序</th>
+	</tr>" .
+	"<tr align='center'>
+		<td colspan='2'>".$msg."</td>
+	</tr></table></body></html>";
+	rename("install.php","install.lock");
+	 exit();
+	}
+
+}
+?>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+<meta name='Author' content='Alan'>
+<title>安装程序</title>
+<link rel='stylesheet' type='text/css' href='Public/css/install.css'>
+<style type="text/css">
+    body{
+    	background-color:#ffffff;
+    }
+</style>
+</head>
+<body>
+	 <br>
+  <center><font color='#0000ff' size='3'>
+  <b>
+  <li>学校：曲阜师范大学</li>
+  <li>学院：信息科学与工程学院</li>
+  <li>专业：计算机科学与技术（师范）</li>
+  <li>题目：基于PHP的专业选修课网站设计与实现</li> 
+  <li>姓名：李兴部</li>
+  <li>学号：2013412355</li>
+  </b>
+  </font></center>
+  <br/>
+	  <form action="" method="post" name="myform" onSubmit="return checkmyform();">
+	   <table border=0 cellspacing=1 align=center class=form>
+      	<tr>
+      		<th colspan="2">安装程序</th>
+      	</tr>
+     	  <tr>
+          <td align="right" width="40%">填写主机:</td>
+          <td><input type="text" name="host" value="" size="40" maxlength="60"/> 本地主机填写localhost</td>
+        </tr>
+       	<tr>
+          <td align="right">用 户 名:</td>
+          <td><input type="text" name="user" value="" size="40" maxlength="60"/> 连接数据库的用户名</td>
+        </tr>
+       	<tr>
+          <td align="right">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码:</td>
+          <td><input type="password" name="password" value="" size="40" maxlength="60"/> 连接数据库的密码</td>
+        </tr>
+       	<tr>
+          <td align="right">数据库名:</td>
+          <td><input type="text" name="dbname" value="" size="40" maxlength="60"/> 要创建的数据库名</td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center" height='30'>
+            <input type="submit" name="install" value=" 开始安装 "/>
+          </td>  
+        </tr>
+	    </table>
+    </form>
+</body>
+<script type="text/javascript">
+        function checkmyform(){
+        	 if(document.myform.host.value==""){
+        	 	  alert('主机名不能为空');
+        	 	  document.myform.host.focus();
+        	 	  return false;
+        	 }
+        	 if(document.myform.dbname.value==""){
+        	 	  alert('数据库名不能为空');
+        	 	  document.myform.dbname.focus();
+        	 	  return false;
+        	 }
+        }
+</script>
+</html>
